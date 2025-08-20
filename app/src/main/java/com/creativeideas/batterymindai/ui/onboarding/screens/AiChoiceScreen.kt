@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativeideas.batterymindai.ui.onboarding.viewmodels.AiChoiceViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AiChoiceScreen(
@@ -31,11 +32,35 @@ fun AiChoiceScreen(
 ) {
     var selectedMode by remember { mutableStateOf("BASE") }
     var isVisible by remember { mutableStateOf(false) }
+    var showMobileDataDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         delay(300)
         isVisible = true
     }
+
+    LaunchedEffect(viewModel.uiEvents) {
+        viewModel.uiEvents.collectLatest { event ->
+            when (event) {
+                is AiChoiceViewModel.UiEvent.NavigateToNextScreen -> onNext()
+                is AiChoiceViewModel.UiEvent.ShowMobileDataDialog -> showMobileDataDialog = true
+            }
+        }
+    }
+
+    if (showMobileDataDialog) {
+        MobileDataDownloadDialog(
+            onConfirm = {
+                viewModel.startMobileDownload()
+                showMobileDataDialog = false
+            },
+            onDismiss = {
+                showMobileDataDialog = false
+                onNext()
+            }
+        )
+    }
+
 
     Column(
         modifier = Modifier
@@ -71,7 +96,6 @@ fun AiChoiceScreen(
             enter = fadeIn(tween(800, 400)) + slideInVertically(tween(800, 400))
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                // [Principio Jobs] Vendiamo il beneficio, non la feature.
                 ChoiceCard(
                     title = "Consigli Intelligenti",
                     description = "Ottieni subito suggerimenti efficaci basati su regole. Leggero e immediato.",
@@ -99,7 +123,6 @@ fun AiChoiceScreen(
             Button(
                 onClick = {
                     viewModel.selectAIMode(selectedMode)
-                    onNext()
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(16.dp)
@@ -108,6 +131,28 @@ fun AiChoiceScreen(
             }
         }
     }
+}
+
+@Composable
+private fun MobileDataDownloadDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Download su Rete Mobile") },
+        text = { Text("Il modello AI è grande (circa 2.4 GB). Sei sicuro di volerlo scaricare utilizzando la tua connessione dati mobile?") },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text("Sì, scarica")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Annulla")
+            }
+        }
+    )
 }
 
 @Composable

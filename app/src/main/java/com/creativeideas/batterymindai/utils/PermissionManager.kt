@@ -10,6 +10,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
+import android.os.PowerManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,6 +18,14 @@ import javax.inject.Singleton
 class PermissionManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+    fun isIgnoringBatteryOptimizations(): Boolean {
+        val pwrm = context.applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val name = context.applicationContext.packageName
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return pwrm.isIgnoringBatteryOptimizations(name)
+        }
+        return true
+    }
 
     fun getRequiredPermissions(): List<String> {
         val permissions = mutableListOf<String>()
