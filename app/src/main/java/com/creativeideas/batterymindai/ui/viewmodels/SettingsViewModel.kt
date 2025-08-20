@@ -110,7 +110,7 @@ class SettingsViewModel @Inject constructor(
                 powerSaveModeEnabled = appPreferences.isPowerSaveModeEnabled(),
                 advancedMonitoring = appPreferences.isAdvancedMonitoringEnabled(),
                 hasUsageStatsPermission = permissionManager.hasUsageStatsPermission(),
-                isBatteryOptimizationDisabled = true, // Placeholder, la logica reale andrebbe qui
+                isBatteryOptimizationDisabled = permissionManager.isIgnoringBatteryOptimizations(),
                 accessMode = appPreferences.getAccessMode()
             )
         }
