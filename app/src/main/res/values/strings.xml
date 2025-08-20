@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">BatteryMind AI</string>
+    <string name="battery_level">Battery Level</string>
+    <string name="battery_score">Battery Score</string>
+    <string name="charging">Charging</string>
+    <string name="not_charging">Not Charging</string>
+    <string name="optimize_battery">Optimize Battery</string>
+    <string name="power_save_mode">Power Save Mode</string>
+    <string name="analyze_usage">Analyze Usage</string>
+    <string name="ai_suggestions">AI Suggestions</string>
+    <string name="battery_history">Battery History</string>
+    <string name="quick_actions">Quick Actions</string>
+    <string name="settings">Settings</string>
+    <string name="no_data_available">No data available</string>
+    <string name="minutes_remaining">%d minutes remaining</string>
+    <string name="minutes_to_full">%d minutes to full</string>
+    <string name="battery_health_good">Battery health is good</string>
+    <string name="battery_health_poor">Battery health needs attention</string>
+    <string name="temperature_warning">Device temperature is high</string>
+    <string name="low_battery_warning">Battery level is low</string>
+</resources>
