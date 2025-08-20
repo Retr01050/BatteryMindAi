@@ -138,7 +138,14 @@ object DatabaseModule {
     fun provideHttpClient(): HttpClient {
         return HttpClient(Android) {
             install(ContentNegotiation) {
-                json()
+                json(
+                    json = kotlinx.serialization.json.Json {
+                        prettyPrint = true
+                        isLenient = true
+                        ignoreUnknownKeys = true
+                    },
+                    contentType = io.ktor.http.ContentType.Any
+                )
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 1800000 // 30 minutes
