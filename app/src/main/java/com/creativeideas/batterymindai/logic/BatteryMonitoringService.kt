@@ -125,9 +125,9 @@ class BatteryMonitoringService : Service() {
         }
 
         with(NotificationManagerCompat.from(this)) {
-            // L'ID della notifica è univoco per evitare che gli avvisi si sovrascrivano a vicenda
-            // in modo troppo rapido. Usiamo un ID basato sul titolo.
-            notify(title.hashCode(), builder.build())
+            // Usiamo un ID univoco basato sul timestamp per garantire che ogni notifica
+            // venga mostrata come nuova, anche se il titolo è lo stesso.
+            notify(System.currentTimeMillis().toInt(), builder.build())
         }
     }
 
