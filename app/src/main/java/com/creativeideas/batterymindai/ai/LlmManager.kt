@@ -26,20 +26,28 @@ class LlmManager @Inject constructor(
     private var llmInference: LlmInference? = null
 
     init {
-        // [Principio Jobs] L'inizializzazione avviene in background per non bloccare mai il thread principale.
-        // L'app si avvia e vive, mentre il "cervello" si sveglia silenziosamente.
+        // L'inizializzazione ora reagisce ai cambiamenti di stato del modello.
         CoroutineScope(Dispatchers.IO).launch {
-            initialize()
+            modelRepository.observeModelStatus().collect { status ->
+                if (status is com.creativeideas.batterymindai.data.models.AIModelStatus.Ready && status.path.isNotEmpty()) {
+                    // Controlla se è già inizializzato per evitare di ricaricare inutilmente
+                    if (!_isReady.value) {
+                        Log.d("LlmManager", "Model status is Ready, proceeding with initialization.")
+                        initialize()
+                    }
+                } else {
+                    // Se lo stato non è Ready, o il path è vuoto, assicurati che sia de-inizializzato.
+                    if (_isReady.value) {
+                        Log.d("LlmManager", "Model status is not Ready, de-initializing.")
+                        llmInference = null // Libera le risorse del modello
+                        _isReady.value = false
+                    }
+                }
+            }
         }
     }
 
     private suspend fun initialize() {
-        if (!modelRepository.isModelReadyForInference()) {
-            Log.d("LlmManager", "Model not ready for inference. Skipping initialization.")
-            _isReady.value = false
-            return
-        }
-
         try {
             val modelFile = modelRepository.getModelFile()!!
             Log.d("LlmManager", "Initializing LLM from path: ${modelFile.absolutePath}")
