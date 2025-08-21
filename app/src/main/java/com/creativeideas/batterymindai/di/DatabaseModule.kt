@@ -148,7 +148,7 @@ object DatabaseModule {
                 )
             }
             install(HttpTimeout) {
-                requestTimeoutMillis = 1800000 // 30 minutes
+                requestTimeoutMillis = 10800000 // 3 hours
                 connectTimeoutMillis = 30000 // 30 seconds
                 socketTimeoutMillis = 30000 // 30 seconds
             }
